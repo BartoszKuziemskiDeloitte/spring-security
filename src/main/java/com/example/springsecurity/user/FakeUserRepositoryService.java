@@ -1,4 +1,4 @@
-package com.example.springsecurity.auth;
+package com.example.springsecurity.user;
 
 import com.google.common.collect.Lists;
 import lombok.AllArgsConstructor;

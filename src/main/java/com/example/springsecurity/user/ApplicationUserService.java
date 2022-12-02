@@ -1,4 +1,4 @@
-package com.example.springsecurity.auth;
+package com.example.springsecurity.user;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.userdetails.UserDetails;

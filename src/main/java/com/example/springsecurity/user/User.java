@@ -1,4 +1,4 @@
-package com.example.springsecurity.auth;
+package com.example.springsecurity.user;
 
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;

@@ -1,4 +1,4 @@
-package com.example.springsecurity.auth;
+package com.example.springsecurity.user;
 
 import java.util.Optional;
 

@@ -1,6 +1,6 @@
 package com.example.springsecurity.security;
 
-import com.example.springsecurity.auth.ApplicationUserService;
+import com.example.springsecurity.user.ApplicationUserService;
 import com.example.springsecurity.jwt.JwtConfig;
 import com.example.springsecurity.jwt.JwtTokenVerifier;
 import com.example.springsecurity.jwt.JwtUsernameAndPasswordAuthenticationFilter;
