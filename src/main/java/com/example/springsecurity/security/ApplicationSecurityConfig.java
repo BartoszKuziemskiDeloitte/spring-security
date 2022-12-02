@@ -18,8 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.crypto.SecretKey;
 
-import static com.example.springsecurity.security.ApplicationUserPermission.COURSE_WRITE;
-import static com.example.springsecurity.security.ApplicationUserRole.*;
+import static com.example.springsecurity.security.UserAuthorities.COURSE_WRITE;
+import static com.example.springsecurity.security.UserRole.*;
 
 @Configuration
 @EnableWebSecurity
@@ -43,9 +43,9 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/", "index", "/css/*").permitAll()
                 .antMatchers("/api/**").hasRole(STUDENT.name())
-                .antMatchers(HttpMethod.DELETE, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission())
-                .antMatchers(HttpMethod.POST, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission())
-                .antMatchers(HttpMethod.PUT, "/management/api/**").hasAuthority(COURSE_WRITE.getPermission())
+                .antMatchers(HttpMethod.DELETE, "/management/api/**").hasAuthority(COURSE_WRITE.getAuthority())
+                .antMatchers(HttpMethod.POST, "/management/api/**").hasAuthority(COURSE_WRITE.getAuthority())
+                .antMatchers(HttpMethod.PUT, "/management/api/**").hasAuthority(COURSE_WRITE.getAuthority())
                 .antMatchers(HttpMethod.GET, "/management/api/**").hasAnyRole(ADMIN.name(), ADMINTRAINEE.name())
                 .anyRequest()
                 .authenticated();

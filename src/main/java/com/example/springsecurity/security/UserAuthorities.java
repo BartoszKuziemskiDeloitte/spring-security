@@ -3,15 +3,15 @@ package com.example.springsecurity.security;
 import lombok.Getter;
 
 @Getter
-public enum ApplicationUserPermission {
+public enum UserAuthorities {
     STUDENT_READ("student:read"),
     STUDENT_WRITE("student:write"),
     COURSE_READ("course:read"),
     COURSE_WRITE("course:write");
 
-    private final String permission;
+    private final String authority;
 
-    ApplicationUserPermission(String permission) {
-        this.permission = permission;
+    UserAuthorities(String authority) {
+        this.authority = authority;
     }
 }

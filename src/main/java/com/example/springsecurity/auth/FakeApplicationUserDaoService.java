@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import static com.example.springsecurity.security.ApplicationUserRole.*;
+import static com.example.springsecurity.security.UserRole.*;
 
 @Repository("fake")
 @AllArgsConstructor
@@ -16,13 +16,13 @@ public class FakeApplicationUserDaoService implements ApplicationUserDao {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public Optional<ApplicationUser> selectApplicationUserByUsername(String username) {
-        return getApplicationUsers().stream().filter(applicationUser -> username.equals(applicationUser.getUsername())).findFirst();
+    public Optional<User> selectApplicationUserByUsername(String username) {
+        return getApplicationUsers().stream().filter(user -> username.equals(user.getUsername())).findFirst();
     }
 
-    private List<ApplicationUser> getApplicationUsers() {
+    private List<User> getApplicationUsers() {
         return Lists.newArrayList(
-                new ApplicationUser(
+                new User(
                         "bartek",
                         passwordEncoder.encode("password"),
                         STUDENT.getGrantedAuthorities(),
@@ -31,7 +31,7 @@ public class FakeApplicationUserDaoService implements ApplicationUserDao {
                         true,
                         true
                 ),
-                new ApplicationUser(
+                new User(
                         "admin",
                         passwordEncoder.encode("password"),
                         ADMIN.getGrantedAuthorities(),
@@ -40,7 +40,7 @@ public class FakeApplicationUserDaoService implements ApplicationUserDao {
                         true,
                         true
                 ),
-                new ApplicationUser(
+                new User(
                         "adam",
                         passwordEncoder.encode("password"),
                         ADMINTRAINEE.getGrantedAuthorities(),

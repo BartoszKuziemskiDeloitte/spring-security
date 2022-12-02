@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UsernameAndPasswordAuthenticationRequest {
+public class UsernameAndPasswordDto {
 
     private String username;
     private String password;
