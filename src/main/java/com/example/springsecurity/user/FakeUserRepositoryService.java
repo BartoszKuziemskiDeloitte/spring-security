@@ -16,13 +16,13 @@ public class FakeUserRepositoryService implements UserRepository {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public Optional<User> selectApplicationUserByUsername(String username) {
-        return getApplicationUsers().stream().filter(user -> username.equals(user.getUsername())).findFirst();
+    public Optional<UserPrincipal> selectApplicationUserByUsername(String username) {
+        return getApplicationUsers().stream().filter(userPrincipal -> username.equals(userPrincipal.getUsername())).findFirst();
     }
 
-    private List<User> getApplicationUsers() {
+    private List<UserPrincipal> getApplicationUsers() {
         return Lists.newArrayList(
-                new User(
+                new UserPrincipal(
                         "bartek",
                         passwordEncoder.encode("password"),
                         STUDENT.getGrantedAuthorities(),
@@ -31,7 +31,7 @@ public class FakeUserRepositoryService implements UserRepository {
                         true,
                         true
                 ),
-                new User(
+                new UserPrincipal(
                         "admin",
                         passwordEncoder.encode("password"),
                         ADMIN.getGrantedAuthorities(),
@@ -40,7 +40,7 @@ public class FakeUserRepositoryService implements UserRepository {
                         true,
                         true
                 ),
-                new User(
+                new UserPrincipal(
                         "adam",
                         passwordEncoder.encode("password"),
                         ADMINTRAINEE.getGrantedAuthorities(),

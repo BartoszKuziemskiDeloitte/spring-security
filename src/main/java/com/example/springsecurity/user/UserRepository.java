@@ -4,6 +4,6 @@ import java.util.Optional;
 
 public interface UserRepository {
 
-    public Optional<User> selectApplicationUserByUsername(String username);
+    Optional<UserPrincipal> selectApplicationUserByUsername(String username);
 
 }

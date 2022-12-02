@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.Set;
 
 @AllArgsConstructor
-public class User implements UserDetails {
+public class UserPrincipal implements UserDetails {
 
     private final String username;
     private final String password;
