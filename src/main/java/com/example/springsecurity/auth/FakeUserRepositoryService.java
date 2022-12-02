@@ -11,7 +11,7 @@ import static com.example.springsecurity.security.UserRole.*;
 
 @Repository("fake")
 @AllArgsConstructor
-public class FakeApplicationUserDaoService implements ApplicationUserDao {
+public class FakeUserRepositoryService implements UserRepository {
 
     private final PasswordEncoder passwordEncoder;
 
