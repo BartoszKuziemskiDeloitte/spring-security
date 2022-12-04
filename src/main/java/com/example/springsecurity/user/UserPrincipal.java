@@ -1,5 +1,6 @@
 package com.example.springsecurity.user;
 
+import com.example.springsecurity.user.role.RoleType;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,7 +18,9 @@ public class UserPrincipal implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
         this.user.getRoles().forEach(role -> {
-            Set<GrantedAuthority> authoritiesFromRole = role.getRoleType().getGrantedAuthorities();
+            String roleName = role.getRoleType();
+            RoleType roleType = RoleType.valueOf(roleName);
+            Set<GrantedAuthority> authoritiesFromRole = roleType.getGrantedAuthorities();
             grantedAuthorities.addAll(authoritiesFromRole);
         });
 

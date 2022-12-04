@@ -18,12 +18,7 @@ public class Role {
     @Column(name = "id")
     private Long id;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "role_type")
-    private RoleType roleType;
+    private String roleType;
 
-    public Role(Long id, RoleType roleType) {
-        this.id = id;
-        this.roleType = roleType;
-    }
 }
