@@ -1,9 +1,9 @@
-package com.example.springsecurity.user;
+package com.example.springsecurity.user.role;
 
-import com.example.springsecurity.security.UserRole;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import javax.persistence.*;
 
 @Getter
@@ -18,7 +18,12 @@ public class Role {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "role")
-    private UserRole userRole;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role_type")
+    private RoleType roleType;
 
+    public Role(Long id, RoleType roleType) {
+        this.id = id;
+        this.roleType = roleType;
+    }
 }

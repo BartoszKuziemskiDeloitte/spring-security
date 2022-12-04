@@ -1,9 +1,13 @@
 package com.example.springsecurity.user;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
 import java.util.Optional;
 
-public interface UserRepository {
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
 
-    Optional<UserPrincipal> selectApplicationUserByUsername(String username);
+    Optional<User> findUserByUsername(String username);
 
 }

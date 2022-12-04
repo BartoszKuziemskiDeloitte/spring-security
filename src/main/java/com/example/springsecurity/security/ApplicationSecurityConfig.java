@@ -1,6 +1,6 @@
 package com.example.springsecurity.security;
 
-import com.example.springsecurity.user.ApplicationUserService;
+import com.example.springsecurity.user.service.UserServiceImpl;
 import com.example.springsecurity.jwt.JwtConfig;
 import com.example.springsecurity.jwt.JwtTokenVerifier;
 import com.example.springsecurity.jwt.JwtUsernameAndPasswordAuthenticationFilter;
@@ -18,8 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.crypto.SecretKey;
 
-import static com.example.springsecurity.security.UserAuthorities.COURSE_WRITE;
-import static com.example.springsecurity.security.UserRole.*;
+import static com.example.springsecurity.user.role.AuthorityType.COURSE_WRITE;
+import static com.example.springsecurity.user.role.RoleType.*;
 
 @Configuration
 @EnableWebSecurity
@@ -27,7 +27,7 @@ import static com.example.springsecurity.security.UserRole.*;
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PasswordEncoder passwordEncoder;
-    private final ApplicationUserService applicationUserService;
+    private final UserServiceImpl userService;
     private final SecretKey secretKey;
     private final JwtConfig jwtConfig;
 
@@ -41,12 +41,8 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtConfig, secretKey))
                 .addFilterAfter(new JwtTokenVerifier(secretKey, jwtConfig), JwtUsernameAndPasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers("/", "index", "/css/*").permitAll()
-                .antMatchers("/api/**").hasRole(STUDENT.name())
-                .antMatchers(HttpMethod.DELETE, "/management/api/**").hasAuthority(COURSE_WRITE.getAuthority())
-                .antMatchers(HttpMethod.POST, "/management/api/**").hasAuthority(COURSE_WRITE.getAuthority())
-                .antMatchers(HttpMethod.PUT, "/management/api/**").hasAuthority(COURSE_WRITE.getAuthority())
-                .antMatchers(HttpMethod.GET, "/management/api/**").hasAnyRole(ADMIN.name(), ADMINTRAINEE.name())
+                .antMatchers("/", "/login").permitAll()
+                .antMatchers(HttpMethod.GET, "/users/all").hasAuthority(COURSE_WRITE.getAuthority())
                 .anyRequest()
                 .authenticated();
     }
@@ -60,7 +56,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     public DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setPasswordEncoder(passwordEncoder);
-        provider.setUserDetailsService(applicationUserService);
+        provider.setUserDetailsService(userService);
         return provider;
     }
 }

@@ -2,28 +2,26 @@ create table users (
     id integer generated always as identity,
     username text not null,
     password text not null,
-    is_account_non_expired boolean not null default true,
-    is_account_non_locked boolean not null default true,
-    is_credentials_non_expired boolean not null default true,
-    is_enabled boolean not null default false,
+    first_name text not null,
+    surname text not null,
 
     constraint pk__users primary key (id),
     constraint uq__users__username unique (username)
 );
 
-create table authorities (
+create table roles (
     id integer generated always as identity,
-    authority text not null,
+    role_type text not null,
 
     constraint pk__authorities primary key (id),
-    constraint uq__authorities unique (authority)
+    constraint uq__authorities unique (role_type)
 );
 
-create table users_authorities (
+create table users_roles (
     user_id integer not null,
-    authority_id integer not null,
+    role_id integer not null,
 
-    constraint uq__users_authorities__user_id__authority_id unique (user_id, authority_id),
-    constraint fk__users_authorities__user_id foreign key (user_id) references users (id),
-    constraint fk__users_authorities__authority_id foreign key (authority_id) references authorities (id)
+    constraint uq__users__roles__user_id__role_id unique (user_id, role_id),
+    constraint fk__users__roles__user_id foreign key (user_id) references users (id),
+    constraint fk__users__roles__role_id foreign key (role_id) references roles (id)
 );
