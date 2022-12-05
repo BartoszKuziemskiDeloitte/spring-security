@@ -1,8 +1,10 @@
 package com.example.springsecurity.user.service;
 
 import com.example.springsecurity.user.User;
+import com.example.springsecurity.user.UserMapper;
 import com.example.springsecurity.user.UserPrincipal;
 import com.example.springsecurity.user.UserRepository;
+import com.example.springsecurity.user.dto.UserDto;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,12 +18,12 @@ import java.util.List;
 public class UserServiceImpl implements UserDetailsService, UserService {
 
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findUserByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
-        UserPrincipal userPrincipal = new UserPrincipal(user);
-        return userPrincipal;
+        return new UserPrincipal(user);
     }
 
     @Override
@@ -30,8 +32,8 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public List<User> getUsers() {
-        return userRepository.findAll();
+    public List<UserDto> getUsers() {
+        return userMapper.toDtoList(userRepository.findAll());
     }
 
     @Override

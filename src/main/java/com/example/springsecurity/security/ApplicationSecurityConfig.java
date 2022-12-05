@@ -1,9 +1,9 @@
 package com.example.springsecurity.security;
 
-import com.example.springsecurity.user.service.UserServiceImpl;
 import com.example.springsecurity.jwt.JwtConfig;
 import com.example.springsecurity.jwt.JwtTokenVerifier;
 import com.example.springsecurity.jwt.JwtUsernameAndPasswordAuthenticationFilter;
+import com.example.springsecurity.user.service.UserServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.crypto.SecretKey;
 
 import static com.example.springsecurity.user.role.AuthorityType.COURSE_WRITE;
-import static com.example.springsecurity.user.role.RoleType.*;
 
 @Configuration
 @EnableWebSecurity
