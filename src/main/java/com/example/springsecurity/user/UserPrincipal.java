@@ -18,9 +18,7 @@ public class UserPrincipal implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
         this.user.getRoles().forEach(role -> {
-            String roleName = role.getRoleType();
-            RoleType roleType = RoleType.valueOf(roleName);
-            Set<GrantedAuthority> authoritiesFromRole = roleType.getGrantedAuthorities();
+            Set<GrantedAuthority> authoritiesFromRole = role.getRoleType().getGrantedAuthorities();
             grantedAuthorities.addAll(authoritiesFromRole);
         });
 

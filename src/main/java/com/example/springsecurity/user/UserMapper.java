@@ -16,7 +16,7 @@ public class UserMapper {
         userDto.setUsername(user.getUsername());
         userDto.setFirstName(user.getFirstName());
         userDto.setSurname(user.getSurname());
-        Set<String> roles = user.getRoles().stream().map(Role::getRoleType).collect(Collectors.toSet());
+        Set<String> roles = user.getRoles().stream().map(role -> role.getRoleType().getName()).collect(Collectors.toSet());
         userDto.setRoles(roles);
         Set<String> authorities = null;
         userDto.setAuthorities(null);

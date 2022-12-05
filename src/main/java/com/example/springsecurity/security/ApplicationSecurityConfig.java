@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.crypto.SecretKey;
 
+import static com.example.springsecurity.user.role.AuthorityType.COURSE_READ;
 import static com.example.springsecurity.user.role.AuthorityType.COURSE_WRITE;
 
 @Configuration
@@ -42,6 +43,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/", "/login").permitAll()
                 .antMatchers(HttpMethod.GET, "/users/all").hasAuthority(COURSE_WRITE.getAuthority())
+                .antMatchers(HttpMethod.GET, "/users/**").hasAuthority(COURSE_READ.getAuthority())
                 .anyRequest()
                 .authenticated();
     }
