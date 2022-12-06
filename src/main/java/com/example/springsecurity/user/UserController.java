@@ -37,4 +37,9 @@ public class UserController {
         return new ResponseEntity<>(userService.addUserRole(addRoleDto), HttpStatus.OK);
     }
 
+    @DeleteMapping("{username}")
+    public ResponseEntity<UserDto> deleteUser(@PathVariable String username) {
+        return new ResponseEntity<>(userService.deleteUser(username),HttpStatus.OK);
+    }
+
 }

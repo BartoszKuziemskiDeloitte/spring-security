@@ -71,4 +71,11 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         User savedUser = userRepository.save(user);
         return userMapper.toDto(savedUser);
     }
+
+    @Override
+    public UserDto deleteUser(String username) {
+        User user = userRepository.findUserByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        userRepository.delete(user);
+        return userMapper.toDto(user);
+    }
 }

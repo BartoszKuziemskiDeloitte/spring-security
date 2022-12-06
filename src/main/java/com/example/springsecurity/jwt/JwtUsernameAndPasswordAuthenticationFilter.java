@@ -1,5 +1,6 @@
 package com.example.springsecurity.jwt;
 
+import com.example.springsecurity.user.dto.UsernameAndPasswordDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Jwts;
 import lombok.AllArgsConstructor;

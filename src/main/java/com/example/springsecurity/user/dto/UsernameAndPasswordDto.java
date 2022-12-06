@@ -1,4 +1,4 @@
-package com.example.springsecurity.jwt;
+package com.example.springsecurity.user.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

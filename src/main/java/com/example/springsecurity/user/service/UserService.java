@@ -15,4 +15,6 @@ public interface UserService {
     UserDto registerUser(User user);
 
     UserDto addUserRole(AddRoleDto addRoleDto);
+
+    UserDto deleteUser(String username);
 }
