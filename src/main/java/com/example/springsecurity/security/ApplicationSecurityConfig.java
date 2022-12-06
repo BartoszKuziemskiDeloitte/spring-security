@@ -43,7 +43,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/", "/login", "/users/register").permitAll()
                 .antMatchers(HttpMethod.GET, "/users/all").hasAuthority(USER_READ_ALL.getAuthority())
                 .antMatchers(HttpMethod.GET, "/users/**").hasAuthority(USER_READ.getAuthority())
-                .antMatchers(HttpMethod.PUT, "/users/add-role").hasAuthority(ADD_ROLE.getAuthority())
+                .antMatchers(HttpMethod.PUT, "/users/change-roles").hasAuthority(CHANGE_ROLES.getAuthority())
                 .antMatchers(HttpMethod.DELETE, "/users/**").hasAuthority(USER_DELETE.getAuthority())
                 .anyRequest()
                 .authenticated();

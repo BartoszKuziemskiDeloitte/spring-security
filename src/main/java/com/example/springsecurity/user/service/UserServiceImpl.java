@@ -4,7 +4,7 @@ import com.example.springsecurity.user.User;
 import com.example.springsecurity.user.UserMapper;
 import com.example.springsecurity.user.UserPrincipal;
 import com.example.springsecurity.user.UserRepository;
-import com.example.springsecurity.user.dto.AddRoleDto;
+import com.example.springsecurity.user.dto.ChangeRolesDto;
 import com.example.springsecurity.user.dto.UserDto;
 import com.example.springsecurity.user.role.Role;
 import com.example.springsecurity.user.role.RoleRepository;
@@ -54,9 +54,9 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     }
 
     @Override
-    public UserDto addUserRole(AddRoleDto addRoleDto) {
-        String username = addRoleDto.getUsername();
-        List<String> roles = addRoleDto.getRoles();
+    public UserDto changeRoles(ChangeRolesDto changeRolesDto) {
+        String username = changeRolesDto.getUsername();
+        List<String> roles = changeRolesDto.getRoles();
 
         List<Role> allRoles = roleRepository.findAll();
         List<Role> allRolesForUser = new ArrayList<>();

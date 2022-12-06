@@ -16,7 +16,7 @@ import static com.example.springsecurity.user.role.AuthorityType.*;
 public enum RoleType {
     ROLE_USER("ROLE_USER", Sets.newHashSet(USER_READ)),
     ROLE_ADMIN("ROLE_ADMIN", Sets.newHashSet(USER_READ_ALL)),
-    ROLE_SUPERADMIN("ROLE_SUPERADMIN", Sets.newHashSet(ADD_ROLE, USER_DELETE));
+    ROLE_SUPERADMIN("ROLE_SUPERADMIN", Sets.newHashSet(CHANGE_ROLES, USER_DELETE));
 
     private final String name;
 

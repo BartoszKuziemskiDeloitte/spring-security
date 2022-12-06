@@ -1,6 +1,6 @@
 package com.example.springsecurity.user;
 
-import com.example.springsecurity.user.dto.AddRoleDto;
+import com.example.springsecurity.user.dto.ChangeRolesDto;
 import com.example.springsecurity.user.dto.UserDto;
 import com.example.springsecurity.user.service.UserService;
 import lombok.AllArgsConstructor;
@@ -32,9 +32,9 @@ public class UserController {
         return new ResponseEntity<>(userService.registerUser(user), HttpStatus.OK);
     }
 
-    @PutMapping("/add-role")
-    public ResponseEntity<UserDto> addRole(@RequestBody AddRoleDto addRoleDto) {
-        return new ResponseEntity<>(userService.addUserRole(addRoleDto), HttpStatus.OK);
+    @PutMapping("/change-roles")
+    public ResponseEntity<UserDto> changeRoles(@RequestBody ChangeRolesDto changeRolesDto) {
+        return new ResponseEntity<>(userService.changeRoles(changeRolesDto), HttpStatus.OK);
     }
 
     @DeleteMapping("{username}")

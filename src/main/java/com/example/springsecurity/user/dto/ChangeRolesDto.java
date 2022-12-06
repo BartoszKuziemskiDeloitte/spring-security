@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class AddRoleDto {
+public class ChangeRolesDto {
 
     @JsonProperty("username")
     private String username;
