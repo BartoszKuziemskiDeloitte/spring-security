@@ -10,21 +10,12 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserDto {
+public class AddRoleDto {
 
     @JsonProperty("username")
     private String username;
 
-    @JsonProperty("firstName")
-    private String firstName;
-
-    @JsonProperty("surname")
-    private String surname;
-
     @JsonProperty("roles")
     private List<String> roles;
-
-    @JsonProperty("authorities")
-    private List<String> authorities;
 
 }

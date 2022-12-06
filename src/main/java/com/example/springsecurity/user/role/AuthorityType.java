@@ -4,10 +4,9 @@ import lombok.Getter;
 
 @Getter
 public enum AuthorityType {
-    STUDENT_READ("student:read"),
-    STUDENT_WRITE("student:write"),
-    COURSE_READ("course:read"),
-    COURSE_WRITE("course:write");
+    USER_READ("USER_READ"),
+    USER_READ_ALL("USER_READ_ALL"),
+    ADD_ROLE("ADD_ROLE");
 
     private final String authority;
 

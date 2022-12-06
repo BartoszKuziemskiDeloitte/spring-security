@@ -1,11 +1,11 @@
 package com.example.springsecurity.user;
 
 import com.example.springsecurity.user.dto.UserDto;
-import com.example.springsecurity.user.role.Role;
+import com.example.springsecurity.user.role.AuthorityType;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -16,10 +16,16 @@ public class UserMapper {
         userDto.setUsername(user.getUsername());
         userDto.setFirstName(user.getFirstName());
         userDto.setSurname(user.getSurname());
-        Set<String> roles = user.getRoles().stream().map(role -> role.getRoleType().getName()).collect(Collectors.toSet());
+        List<String> roles = user.getRoles().stream().map(role -> role.getRoleType().getName()).collect(Collectors.toList());
         userDto.setRoles(roles);
-        Set<String> authorities = null;
-        userDto.setAuthorities(null);
+        List<String> authorities = new ArrayList<>();
+        user.getRoles().forEach(role -> {
+            authorities.addAll(role.getRoleType().getAuthorities()
+                    .stream()
+                    .map(AuthorityType::getAuthority)
+                    .collect(Collectors.toList()));
+        });
+        userDto.setAuthorities(authorities);
         return userDto;
     }
 

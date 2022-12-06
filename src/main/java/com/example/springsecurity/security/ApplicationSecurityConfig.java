@@ -18,8 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.crypto.SecretKey;
 
-import static com.example.springsecurity.user.role.AuthorityType.COURSE_READ;
-import static com.example.springsecurity.user.role.AuthorityType.COURSE_WRITE;
+import static com.example.springsecurity.user.role.AuthorityType.*;
 
 @Configuration
 @EnableWebSecurity
@@ -41,9 +40,10 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtConfig, secretKey))
                 .addFilterAfter(new JwtTokenVerifier(secretKey, jwtConfig), JwtUsernameAndPasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers("/", "/login").permitAll()
-                .antMatchers(HttpMethod.GET, "/users/all").hasAuthority(COURSE_WRITE.getAuthority())
-                .antMatchers(HttpMethod.GET, "/users/**").hasAuthority(COURSE_READ.getAuthority())
+                .antMatchers("/", "/login", "/users/register").permitAll()
+                .antMatchers(HttpMethod.GET, "/users/all").hasAuthority(USER_READ_ALL.getAuthority())
+                .antMatchers(HttpMethod.GET, "/users/**").hasAuthority(USER_READ.getAuthority())
+                .antMatchers(HttpMethod.PUT, "/users/add-role").hasAuthority(ADD_ROLE.getAuthority())
                 .anyRequest()
                 .authenticated();
     }

@@ -6,7 +6,6 @@ import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import javax.persistence.Transient;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -15,13 +14,13 @@ import static com.example.springsecurity.user.role.AuthorityType.*;
 @Getter
 @AllArgsConstructor
 public enum RoleType {
-    ROLE_USER("ROLE_USER", Sets.newHashSet(COURSE_READ)),
-    ROLE_ADMIN("ROLE_ADMIN", Sets.newHashSet(COURSE_READ, COURSE_WRITE, STUDENT_READ, STUDENT_WRITE)),
-    ROLE_SUPERADMIN("ROLE_SUPERADMIN", Sets.newHashSet(COURSE_READ, STUDENT_READ));
+    ROLE_USER("ROLE_USER", Sets.newHashSet(USER_READ)),
+    ROLE_ADMIN("ROLE_ADMIN", Sets.newHashSet(USER_READ_ALL)),
+    ROLE_SUPERADMIN("ROLE_SUPERADMIN", Sets.newHashSet(ADD_ROLE));
 
     private final String name;
 
-
+    // @Transient ??
     private final Set<AuthorityType> authorities;
 
     public Set<GrantedAuthority> getGrantedAuthorities() {
