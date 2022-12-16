@@ -1,5 +1,6 @@
 package com.example.springsecurity.user;
 
+import com.example.springsecurity.jwt.JwtService;
 import com.example.springsecurity.user.dto.ChangeRolesDto;
 import com.example.springsecurity.user.dto.UserDto;
 import com.example.springsecurity.user.service.UserService;
@@ -8,7 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 @AllArgsConstructor
 @RestController
@@ -16,6 +19,7 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final JwtService jwtService;
 
     @GetMapping("{username}")
     public ResponseEntity<UserDto> getUser(@PathVariable String username) {
@@ -40,6 +44,11 @@ public class UserController {
     @DeleteMapping("{username}")
     public ResponseEntity<UserDto> deleteUser(@PathVariable String username) {
         return new ResponseEntity<>(userService.deleteUser(username),HttpStatus.OK);
+    }
+
+    @GetMapping("/refresh-token")
+    public ResponseEntity<Map<String, String>> refreshToken(HttpServletRequest request) {
+        return new ResponseEntity<>(jwtService.refreshToken(request), HttpStatus.OK);
     }
 
 }

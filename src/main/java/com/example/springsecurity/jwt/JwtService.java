@@ -1,0 +1,66 @@
+package com.example.springsecurity.jwt;
+
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.example.springsecurity.user.User;
+import com.example.springsecurity.user.UserRepository;
+import com.google.common.base.Strings;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+
+
+@Service
+@RequiredArgsConstructor
+public class JwtService {
+
+    private final JwtConfig jwtConfig;
+    private final UserRepository userRepository;
+
+    public Map<String, String> refreshToken(HttpServletRequest request) {
+        String authorizationHeader = request.getHeader(AUTHORIZATION);
+        if (Strings.isNullOrEmpty(authorizationHeader) || !authorizationHeader.startsWith(jwtConfig.getTokenPrefix())) {
+            throw new IllegalStateException("Refresh token empty or with no prefix");
+        }
+        String refreshToken = authorizationHeader.replace(jwtConfig.getTokenPrefix(), "");
+
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(jwtConfig.getSecretKey().getBytes());
+            JWTVerifier verifier = JWT.require(algorithm).build();
+            DecodedJWT decodedJWT = verifier.verify(refreshToken);
+            String username = decodedJWT.getSubject();
+            User user = userRepository.findUserByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
+            List<String> authorities = new ArrayList<>();
+            user.getRoles().forEach(role -> {
+                Set<GrantedAuthority> authoritiesFromRole = role.getRoleType().getGrantedAuthorities();
+                authorities.addAll(authoritiesFromRole
+                        .stream()
+                        .map(GrantedAuthority::getAuthority)
+                        .collect(Collectors.toList()));
+            });
+
+            String accessToken = JWT.create()
+                    .withSubject(user.getUsername())
+                    .withClaim("authorities", authorities)
+                    .withExpiresAt(new Date(System.currentTimeMillis() + 5 * 60 * 1000))
+                    .withIssuedAt(new Date())
+                    .sign(algorithm);
+
+            return Collections.singletonMap("access_token", accessToken);
+        } catch (JWTCreationException | JWTVerificationException exception) {
+            throw new IllegalStateException("Jwt exception");
+        }
+    }
+
+}
