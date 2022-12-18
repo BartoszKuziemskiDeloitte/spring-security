@@ -49,8 +49,10 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
                     .collect(Collectors.toSet());
             Authentication authentication = new UsernamePasswordAuthenticationToken(username, null, simpleGrantedAuthorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
-        } catch (JWTVerificationException | JWTCreationException exception) {
-            throw new IllegalStateException("jwt exception");
+        } catch (JWTVerificationException exception) {
+            throw new JWTVerificationException(exception.getMessage(), exception.getCause());
+        } catch (JWTCreationException exception) {
+            throw new JWTCreationException(exception.getMessage(), exception.getCause());
         }
 
         filterChain.doFilter(request, response);

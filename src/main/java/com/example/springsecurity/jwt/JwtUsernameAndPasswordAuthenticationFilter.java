@@ -2,6 +2,8 @@ package com.example.springsecurity.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.example.springsecurity.exception.ApplicationException;
+import com.example.springsecurity.exception.Error;
 import com.example.springsecurity.user.dto.UsernameAndPasswordDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
@@ -41,7 +43,7 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
             return authenticationManager.authenticate(authentication);
 
         } catch (IOException exception) {
-            throw new RuntimeException(exception);
+            throw new ApplicationException(Error.AUTHENTICATION_EXCEPTION);
         }
     }
 
