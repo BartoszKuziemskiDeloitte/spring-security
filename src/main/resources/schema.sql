@@ -25,3 +25,11 @@ create table users_roles (
     constraint fk__users__roles__user_id foreign key (user_id) references users (id),
     constraint fk__users__roles__role_id foreign key (role_id) references roles (id)
 );
+
+create table token_blacklist (
+    id integer generated always as identity,
+    token text not null,
+
+    constraint pk__tokens primary key (id),
+    constraint uq__tokens__token unique (token)
+)

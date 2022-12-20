@@ -6,6 +6,10 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.example.springsecurity.exception.ApplicationException;
+import com.example.springsecurity.exception.Error;
+import com.example.springsecurity.jwt.token.Token;
+import com.example.springsecurity.jwt.token.TokenRepository;
 import com.example.springsecurity.user.User;
 import com.example.springsecurity.user.UserRepository;
 import com.google.common.base.Strings;
@@ -26,6 +30,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 public class JwtService {
 
     private final JwtConfig jwtConfig;
+    private final TokenRepository tokenRepository;
     private final UserRepository userRepository;
 
     public Map<String, String> refreshToken(HttpServletRequest request) {
@@ -34,6 +39,10 @@ public class JwtService {
             throw new JWTVerificationException("Refresh token empty or with no prefix");
         }
         String refreshToken = authorizationHeader.replace(jwtConfig.getTokenPrefix(), "");
+
+        if (tokenRepository.findByToken(refreshToken).isPresent()) {
+            throw new ApplicationException(Error.REFRESH_TOKEN_BLACKLISTED);
+        }
 
         try {
             Algorithm algorithm = Algorithm.HMAC256(jwtConfig.getSecretKey().getBytes());
@@ -69,4 +78,11 @@ public class JwtService {
         }
     }
 
+    public void blacklistJwt(String refreshToken) {
+        if (tokenRepository.findByToken(refreshToken).isPresent()) {
+            throw new ApplicationException(Error.REFRESH_TOKEN_ALREADY_BLACKLISTED);
+        }
+        Token token = new Token(refreshToken);
+        tokenRepository.save(token);
+    }
 }

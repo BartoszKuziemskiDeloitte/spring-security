@@ -51,4 +51,10 @@ public class UserController {
         return new ResponseEntity<>(jwtService.refreshToken(request), HttpStatus.OK);
     }
 
+    @PutMapping("/logout")
+    public ResponseEntity<Void> logout(@RequestBody String refreshToken) {
+        jwtService.blacklistJwt(refreshToken);
+        return ResponseEntity.ok(null);
+    }
+
 }

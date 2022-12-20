@@ -37,7 +37,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtConfig))
                 .addFilterAfter(new JwtTokenVerifier(jwtConfig), JwtUsernameAndPasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers("/", "/login", "/users/register", "/users/refresh-token").permitAll()
+                .antMatchers("/", "/login", "/users/register", "/users/refresh-token", "/users/logout").permitAll()
                 .antMatchers(HttpMethod.GET, "/users/all").hasAuthority(USER_READ_ALL.getAuthority())
                 .antMatchers(HttpMethod.GET, "/users/**").hasAuthority(USER_READ.getAuthority())
                 .antMatchers(HttpMethod.PUT, "/users/change-roles").hasAuthority(CHANGE_ROLES.getAuthority())
