@@ -8,8 +8,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.springsecurity.exception.ApplicationException;
 import com.example.springsecurity.exception.Error;
-import com.example.springsecurity.jwt.token.Token;
-import com.example.springsecurity.jwt.token.TokenRepository;
+import com.example.springsecurity.redis.RedisRepository;
 import com.example.springsecurity.user.User;
 import com.example.springsecurity.user.UserRepository;
 import com.google.common.base.Strings;
@@ -30,8 +29,8 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 public class JwtService {
 
     private final JwtConfig jwtConfig;
-    private final TokenRepository tokenRepository;
     private final UserRepository userRepository;
+    private final RedisRepository redisRepository;
 
     public Map<String, String> refreshToken(HttpServletRequest request) {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
@@ -40,7 +39,7 @@ public class JwtService {
         }
         String refreshToken = authorizationHeader.replace(jwtConfig.getTokenPrefix(), "");
 
-        if (tokenRepository.findByToken(refreshToken).isPresent()) {
+        if (this.findToken(refreshToken) != null) {
             throw new ApplicationException(Error.REFRESH_TOKEN_BLACKLISTED);
         }
 
@@ -78,11 +77,11 @@ public class JwtService {
         }
     }
 
-    public void blacklistJwt(String refreshToken) {
-        if (tokenRepository.findByToken(refreshToken).isPresent()) {
-            throw new ApplicationException(Error.REFRESH_TOKEN_ALREADY_BLACKLISTED);
-        }
-        Token token = new Token(refreshToken);
-        tokenRepository.save(token);
+    public String blacklistJwt(String token) {
+        return redisRepository.save(token);
+    }
+
+    public String findToken(String token) {
+        return redisRepository.findToken(token);
     }
 }
