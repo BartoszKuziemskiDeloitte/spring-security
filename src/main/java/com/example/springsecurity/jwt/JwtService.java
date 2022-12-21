@@ -14,6 +14,7 @@ import com.example.springsecurity.user.User;
 import com.example.springsecurity.user.UserRepository;
 import com.google.common.base.Strings;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -40,7 +41,7 @@ public class JwtService {
         }
         String refreshToken = authorizationHeader.replace(jwtConfig.getTokenPrefix(), "");
 
-        if (tokenRepository.findByToken(refreshToken).isPresent()) {
+        if (this.findToken(refreshToken) != null) {
             throw new ApplicationException(Error.REFRESH_TOKEN_BLACKLISTED);
         }
 
@@ -79,10 +80,17 @@ public class JwtService {
     }
 
     public void blacklistJwt(String refreshToken) {
-        if (tokenRepository.findByToken(refreshToken).isPresent()) {
+        if (tokenRepository.findByToken(refreshToken) != null) {
             throw new ApplicationException(Error.REFRESH_TOKEN_ALREADY_BLACKLISTED);
         }
         Token token = new Token(refreshToken);
         tokenRepository.save(token);
+    }
+
+    @Cacheable(key = "#token", value = "Token")
+    public String findToken(String token) {
+        System.out.println("repo called");
+        Token tokenFromDb = tokenRepository.findByToken(token);
+        return tokenFromDb != null ? tokenFromDb.getToken() : null;
     }
 }
