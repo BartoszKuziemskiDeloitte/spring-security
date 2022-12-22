@@ -1,5 +1,6 @@
 package com.example.springsecurity.security;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -8,7 +9,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class CorsConfiguration {
 
-    private static final String ALLOWED_ORIGIN = "http://localhost:4200";
+    @Value("${frontend.url}")
+    private String allowedOrigin;
 
     @Bean
     public WebMvcConfigurer getCorsConfiguration() {
@@ -17,7 +19,7 @@ public class CorsConfiguration {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowCredentials(true)
-                        .allowedOrigins(ALLOWED_ORIGIN)
+                        .allowedOrigins(allowedOrigin)
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
                         .allowedHeaders("*");
             }

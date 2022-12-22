@@ -65,7 +65,7 @@ public class JwtService {
             String accessToken = JWT.create()
                     .withSubject(user.getUsername())
                     .withClaim("authorities", authorities)
-                    .withExpiresAt(new Date(System.currentTimeMillis() + 5 * 60 * 1000))
+                    .withExpiresAt(new Date(System.currentTimeMillis() + jwtConfig.getAccessTokenExpiration() * 1000))
                     .withIssuedAt(new Date())
                     .sign(algorithm);
 

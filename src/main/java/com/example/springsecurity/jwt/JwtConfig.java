@@ -1,23 +1,31 @@
 package com.example.springsecurity.jwt;
 
-import com.google.common.net.HttpHeaders;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
 
 @Getter
-@Setter
 @NoArgsConstructor
-@ConfigurationProperties(prefix = "application.jwt")
+@Configuration
 public class JwtConfig {
 
+    @Value("${application.jwt.secret-key}")
     private String secretKey;
-    private String tokenPrefix;
-    private Integer tokenExpirationAfterDays;
 
-    public String getAuthorizationHeader() {
-        return HttpHeaders.AUTHORIZATION;
-    }
+    @Value("${application.jwt.token-prefix}")
+    private String tokenPrefix;
+
+    @Value("${application.jwt.access-token-expiration}")
+    private Long accessTokenExpiration;
+
+    @Value("${application.jwt.refresh-token-expiration}")
+    private Long refreshTokenExpiration;
+
+    @Value("${application.jwt.access-token-cookie-name}")
+    private String accessTokenCookieName;
+
+    @Value("${application.jwt.refresh-token-cookie-name}")
+    private String refreshTokenCookieName;
 
 }

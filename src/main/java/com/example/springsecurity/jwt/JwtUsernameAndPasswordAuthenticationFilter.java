@@ -55,24 +55,24 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
                         .stream()
                         .map(GrantedAuthority::getAuthority)
                         .collect(Collectors.toList()))
-                .withExpiresAt(new Date(System.currentTimeMillis() + 5 * 60 * 1000))
+                .withExpiresAt(new Date(System.currentTimeMillis() + jwtConfig.getAccessTokenExpiration() * 1000))
                 .withIssuedAt(new Date())
                 .sign(algorithm);
 
         String refreshToken = JWT.create()
                 .withSubject(authResult.getName())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 30 * 60 * 1000))
+                .withExpiresAt(new Date(System.currentTimeMillis() + jwtConfig.getRefreshTokenExpiration() * 1000))
                 .withIssuedAt(new Date())
                 .sign(algorithm);
 
-        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
-        accessTokenCookie.setMaxAge(300);
+        Cookie accessTokenCookie = new Cookie(jwtConfig.getAccessTokenCookieName(), accessToken);
+        accessTokenCookie.setMaxAge(jwtConfig.getAccessTokenExpiration().intValue());
         accessTokenCookie.setHttpOnly(true);
         accessTokenCookie.setPath("/");
         accessTokenCookie.setSecure(false);
 
-        Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
-        refreshTokenCookie.setMaxAge(1800);
+        Cookie refreshTokenCookie = new Cookie(jwtConfig.getRefreshTokenCookieName(), refreshToken);
+        refreshTokenCookie.setMaxAge(jwtConfig.getRefreshTokenExpiration().intValue());
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setPath("/");
         refreshTokenCookie.setSecure(false);

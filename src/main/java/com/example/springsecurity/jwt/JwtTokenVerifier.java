@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+
 @AllArgsConstructor
 public class JwtTokenVerifier extends OncePerRequestFilter {
 
@@ -30,7 +32,7 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String authorizationHeader = request.getHeader(jwtConfig.getAuthorizationHeader());
+        String authorizationHeader = request.getHeader(AUTHORIZATION);
         if (Strings.isNullOrEmpty(authorizationHeader) || !authorizationHeader.startsWith(jwtConfig.getTokenPrefix()) || request.getServletPath().equals("/users/refresh-token")) {
             filterChain.doFilter(request, response);
             return;
