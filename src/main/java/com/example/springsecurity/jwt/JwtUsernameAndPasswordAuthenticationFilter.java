@@ -8,6 +8,7 @@ import com.example.springsecurity.user.dto.UsernameAndPasswordDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,13 +18,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.stream.Collectors;
+
+import static org.springframework.http.HttpHeaders.SET_COOKIE;
 
 @AllArgsConstructor
 public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
@@ -67,13 +69,16 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
                 .withIssuedAt(new Date())
                 .sign(algorithm);
 
-        Cookie refreshTokenCookie = new Cookie(jwtConfig.getRefreshTokenCookieName(), refreshToken);
-        refreshTokenCookie.setMaxAge(jwtConfig.getRefreshTokenExpiration().intValue());
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setSecure(false);
+        ResponseCookie cookie = ResponseCookie.from(jwtConfig.getRefreshTokenCookieName(), refreshToken)
+                .maxAge(jwtConfig.getRefreshTokenExpiration())
+                .httpOnly(true)
+                .path("/")
+                .secure(false)
+                .sameSite("Lax")
+                .build();
 
-        response.addCookie(refreshTokenCookie);
+        response.setHeader(SET_COOKIE, cookie.toString());
+
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         new ObjectMapper().writeValue(response.getOutputStream(), Collections.singletonMap("access_token", accessToken));
 
