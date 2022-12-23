@@ -7,6 +7,7 @@ import com.example.springsecurity.exception.Error;
 import com.example.springsecurity.user.dto.UsernameAndPasswordDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,6 +21,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.stream.Collectors;
 
@@ -65,20 +67,15 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
                 .withIssuedAt(new Date())
                 .sign(algorithm);
 
-        Cookie accessTokenCookie = new Cookie(jwtConfig.getAccessTokenCookieName(), accessToken);
-        accessTokenCookie.setMaxAge(jwtConfig.getAccessTokenExpiration().intValue());
-        accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setPath("/");
-        accessTokenCookie.setSecure(false);
-
         Cookie refreshTokenCookie = new Cookie(jwtConfig.getRefreshTokenCookieName(), refreshToken);
         refreshTokenCookie.setMaxAge(jwtConfig.getRefreshTokenExpiration().intValue());
         refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setPath("/refresh-token");
+        refreshTokenCookie.setPath("/");
         refreshTokenCookie.setSecure(false);
 
-        response.addCookie(accessTokenCookie);
         response.addCookie(refreshTokenCookie);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        new ObjectMapper().writeValue(response.getOutputStream(), Collections.singletonMap("access_token", accessToken));
 
     }
 }

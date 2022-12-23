@@ -12,17 +12,15 @@ import com.example.springsecurity.jwt.token.Token;
 import com.example.springsecurity.jwt.token.TokenRepository;
 import com.example.springsecurity.user.User;
 import com.example.springsecurity.user.UserRepository;
-import com.google.common.base.Strings;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 
 @Service
@@ -34,11 +32,7 @@ public class JwtService {
     private final UserRepository userRepository;
 
     public Map<String, String> refreshToken(HttpServletRequest request) {
-        String authorizationHeader = request.getHeader(AUTHORIZATION);
-        if (Strings.isNullOrEmpty(authorizationHeader) || !authorizationHeader.startsWith(jwtConfig.getTokenPrefix())) {
-            throw new JWTVerificationException("Refresh token empty or with no prefix");
-        }
-        String refreshToken = authorizationHeader.replace(jwtConfig.getTokenPrefix(), "");
+        String refreshToken = this.getJwtFromCookie(request);
 
         if (tokenRepository.findByToken(refreshToken).isPresent()) {
             throw new ApplicationException(Error.REFRESH_TOKEN_BLACKLISTED);
@@ -78,11 +72,21 @@ public class JwtService {
         }
     }
 
-    public void blacklistJwt(String refreshToken) {
+    public void blacklistJwt(HttpServletRequest request) {
+        String refreshToken = this.getJwtFromCookie(request);
         if (tokenRepository.findByToken(refreshToken).isPresent()) {
             throw new ApplicationException(Error.REFRESH_TOKEN_ALREADY_BLACKLISTED);
         }
         Token token = new Token(refreshToken);
         tokenRepository.save(token);
     }
+
+    private String getJwtFromCookie(HttpServletRequest request) {
+        return Arrays.stream(request.getCookies())
+                .filter(cookie -> cookie.getName().equals(jwtConfig.getRefreshTokenCookieName()))
+                .map(Cookie::getValue)
+                .findAny()
+                .orElseThrow(() -> new JWTVerificationException("None authorization cookie found"));
+    }
+
 }

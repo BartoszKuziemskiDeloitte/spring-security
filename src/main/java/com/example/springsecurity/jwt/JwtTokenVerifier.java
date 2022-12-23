@@ -16,11 +16,9 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -34,18 +32,13 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-//        String authorizationHeader = request.getHeader(AUTHORIZATION);
-//        if (Strings.isNullOrEmpty(authorizationHeader) || !authorizationHeader.startsWith(jwtConfig.getTokenPrefix()) || request.getServletPath().equals("/users/refresh-token")) {
-//            filterChain.doFilter(request, response);
-//            return;
-//        }
+        String authorizationHeader = request.getHeader(AUTHORIZATION);
+        if (Strings.isNullOrEmpty(authorizationHeader) || !authorizationHeader.startsWith(jwtConfig.getTokenPrefix()) || request.getServletPath().equals("/users/refresh-token")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-//        String token = authorizationHeader.replace(jwtConfig.getTokenPrefix(), "");
-        String token = Arrays.stream(request.getCookies())
-                .filter(cookie -> cookie.getName().equals(jwtConfig.getAccessTokenCookieName()))
-                .map(Cookie::getValue)
-                .findAny()
-                .orElseThrow(() -> new JWTVerificationException("None authorization cookie found"));
+        String token = authorizationHeader.replace(jwtConfig.getTokenPrefix(), "");
 
         try {
             Algorithm algorithm = Algorithm.HMAC256(jwtConfig.getSecretKey().getBytes());
