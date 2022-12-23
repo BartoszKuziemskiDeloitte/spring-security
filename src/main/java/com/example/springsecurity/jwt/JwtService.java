@@ -12,6 +12,7 @@ import com.example.springsecurity.jwt.token.TokenRepository;
 import com.example.springsecurity.user.User;
 import com.example.springsecurity.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -55,13 +56,7 @@ public class JwtService {
                         .collect(Collectors.toList()));
             });
 
-            String accessToken = JWT.create()
-                    .withSubject(user.getUsername())
-                    .withClaim("authorities", authorities)
-                    .withExpiresAt(new Date(System.currentTimeMillis() + jwtConfig.getAccessTokenExpiration() * 1000))
-                    .withIssuedAt(new Date())
-                    .sign(algorithm);
-
+            String accessToken = this.createAccessToken(user.getUsername(), authorities, algorithm);
             return Collections.singletonMap("access_token", accessToken);
 
         } catch (JWTCreationException exception) {
@@ -71,12 +66,39 @@ public class JwtService {
         }
     }
 
+    public String createAccessToken(String username, List<String> authorities, Algorithm algorithm) {
+        return JWT.create()
+                .withSubject(username)
+                .withClaim("authorities", authorities)
+                .withExpiresAt(new Date(System.currentTimeMillis() + jwtConfig.getAccessTokenExpiration() * 1000))
+                .withIssuedAt(new Date())
+                .sign(algorithm);
+    }
+
+    public String createRefreshToken(String username, Algorithm algorithm) {
+       return JWT.create()
+                .withSubject(username)
+                .withExpiresAt(new Date(System.currentTimeMillis() + jwtConfig.getRefreshTokenExpiration() * 1000))
+                .withIssuedAt(new Date())
+                .sign(algorithm);
+    }
+
     public String getJwtFromCookie(HttpServletRequest request) {
         return Arrays.stream(request.getCookies())
                 .filter(cookie -> cookie.getName().equals(jwtConfig.getRefreshTokenCookieName()))
                 .map(Cookie::getValue)
                 .findAny()
                 .orElseThrow(() -> new JWTVerificationException("None authorization cookie found"));
+    }
+
+    public ResponseCookie createCookie(String token) {
+        return ResponseCookie.from(jwtConfig.getRefreshTokenCookieName(), token)
+                .maxAge(jwtConfig.getRefreshTokenExpiration())
+                .httpOnly(true)
+                .path("/")
+                .secure(false) // change to true! false is only for testing
+                .sameSite("Lax")
+                .build();
     }
 
 }

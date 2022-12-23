@@ -1,6 +1,7 @@
 package com.example.springsecurity.security;
 
 import com.example.springsecurity.jwt.JwtConfig;
+import com.example.springsecurity.jwt.JwtService;
 import com.example.springsecurity.jwt.JwtTokenVerifier;
 import com.example.springsecurity.jwt.JwtUsernameAndPasswordAuthenticationFilter;
 import com.example.springsecurity.user.service.UserServiceImpl;
@@ -26,6 +27,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     private final PasswordEncoder passwordEncoder;
     private final UserServiceImpl userService;
     private final JwtConfig jwtConfig;
+    private final JwtService jwtService;
     private final ApplicationLogoutSuccessHandler applicationLogoutSuccessHandler;
 
     @Override
@@ -37,7 +39,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtConfig))
+                .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtConfig, jwtService))
                 .addFilterAfter(new JwtTokenVerifier(jwtConfig), JwtUsernameAndPasswordAuthenticationFilter.class)
                 .logout()
                 .logoutUrl("/logout")

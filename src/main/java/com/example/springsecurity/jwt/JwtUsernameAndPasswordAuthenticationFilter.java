@@ -1,6 +1,5 @@
 package com.example.springsecurity.jwt;
 
-import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.example.springsecurity.exception.ApplicationException;
 import com.example.springsecurity.exception.Error;
@@ -22,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.springframework.http.HttpHeaders.SET_COOKIE;
@@ -32,6 +31,7 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
 
     private final AuthenticationManager authenticationManager;
     private final JwtConfig jwtConfig;
+    private final JwtService jwtService;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -52,33 +52,18 @@ public class JwtUsernameAndPasswordAuthenticationFilter extends UsernamePassword
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         Algorithm algorithm = Algorithm.HMAC256(jwtConfig.getSecretKey().getBytes());
-        String accessToken = JWT.create()
-                .withSubject(authResult.getName())
-                .withClaim("authorities", authResult
-                        .getAuthorities()
-                        .stream()
-                        .map(GrantedAuthority::getAuthority)
-                        .collect(Collectors.toList()))
-                .withExpiresAt(new Date(System.currentTimeMillis() + jwtConfig.getAccessTokenExpiration() * 1000))
-                .withIssuedAt(new Date())
-                .sign(algorithm);
+        String username = authResult.getName();
+        List<String> authorities = authResult
+                .getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList());
 
-        String refreshToken = JWT.create()
-                .withSubject(authResult.getName())
-                .withExpiresAt(new Date(System.currentTimeMillis() + jwtConfig.getRefreshTokenExpiration() * 1000))
-                .withIssuedAt(new Date())
-                .sign(algorithm);
-
-        ResponseCookie cookie = ResponseCookie.from(jwtConfig.getRefreshTokenCookieName(), refreshToken)
-                .maxAge(jwtConfig.getRefreshTokenExpiration())
-                .httpOnly(true)
-                .path("/")
-                .secure(false)
-                .sameSite("Lax")
-                .build();
-
+        String refreshToken = jwtService.createRefreshToken(username, algorithm);
+        ResponseCookie cookie = jwtService.createCookie(refreshToken);
         response.setHeader(SET_COOKIE, cookie.toString());
 
+        String accessToken = jwtService.createAccessToken(username, authorities, algorithm);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         new ObjectMapper().writeValue(response.getOutputStream(), Collections.singletonMap("access_token", accessToken));
 
