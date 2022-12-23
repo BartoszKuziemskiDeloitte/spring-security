@@ -26,6 +26,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     private final PasswordEncoder passwordEncoder;
     private final UserServiceImpl userService;
     private final JwtConfig jwtConfig;
+    private final ApplicationLogoutSuccessHandler applicationLogoutSuccessHandler;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -38,8 +39,13 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtConfig))
                 .addFilterAfter(new JwtTokenVerifier(jwtConfig), JwtUsernameAndPasswordAuthenticationFilter.class)
+                .logout()
+                .logoutUrl("/logout")
+                .logoutSuccessHandler(applicationLogoutSuccessHandler)
+                .deleteCookies(jwtConfig.getRefreshTokenCookieName())
+                .and()
                 .authorizeRequests()
-                .antMatchers("/", "/login", "/users/register", "/users/refresh-token", "/users/logout").permitAll()
+                .antMatchers("/", "/login", "/users/register", "/users/refresh-token", "/logout").permitAll()
                 .antMatchers(HttpMethod.GET, "/users/all").hasAuthority(USER_READ_ALL.getAuthority())
                 .antMatchers(HttpMethod.GET, "/users/**").hasAuthority(USER_READ.getAuthority())
                 .antMatchers(HttpMethod.PUT, "/users/change-roles").hasAuthority(CHANGE_ROLES.getAuthority())

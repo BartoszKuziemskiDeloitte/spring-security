@@ -43,18 +43,12 @@ public class UserController {
 
     @DeleteMapping("{username}")
     public ResponseEntity<UserDto> deleteUser(@PathVariable String username) {
-        return new ResponseEntity<>(userService.deleteUser(username),HttpStatus.OK);
+        return new ResponseEntity<>(userService.deleteUser(username), HttpStatus.OK);
     }
 
     @GetMapping("/refresh-token")
     public ResponseEntity<Map<String, String>> refreshToken(HttpServletRequest request) {
         return new ResponseEntity<>(jwtService.refreshToken(request), HttpStatus.OK);
-    }
-
-    @PutMapping("/logout")
-    public ResponseEntity<Void> logout(HttpServletRequest request) {
-        jwtService.blacklistJwt(request);
-        return ResponseEntity.ok(null);
     }
 
 }
